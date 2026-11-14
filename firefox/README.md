@@ -1,0 +1,13 @@
+# Retire.js for Firefox
+
+The current extension is a Manifest V3 WebExtension for Firefox 140 or newer. It shares the Analyst Console and static/AST scanner with Chrome; it does not execute downloaded scripts.
+
+1. Download this repository using **Code → Download ZIP** on GitHub and extract it, or clone it. The complete prebuilt package is included; Node.js is not required.
+2. Open `about:debugging#/runtime/this-firefox`.
+3. Choose **Load Temporary Add-on**, then select `dist/firefox/manifest.json`.
+4. Allow site access when prompted and open an HTTP(S) page; tabs already open are scanned when you switch to them or open the popup.
+5. Open the Retire.js toolbar popup to inspect libraries, search advisories, or export JSON.
+
+Temporary installation lasts until Firefox exits. Store signing and publication are not part of this development build. The existing extension ID is preserved in `firefox/manifest.json`.
+
+The files under `firefox/lib`, `firefox/data`, and `firefox/test` belong to the archived Add-on SDK implementation and are not packaged or executed. The modern build uses `chrome/build/extension` as shared source and `firefox/manifest.json` for Firefox configuration. See [shared development and test instructions](../chrome/README.md).
