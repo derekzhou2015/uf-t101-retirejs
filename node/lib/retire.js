@@ -146,21 +146,31 @@ function isAtOrAbove(version1, version2) {
   var v2 = version2.split(/[\.\-]/g);
   var l = v1.length > v2.length ? v1.length : v2.length;
   for (var i = 0; i < l; i++) {
-    var v1_c = toComparable(v1[i]);
-    var v2_c = toComparable(v2[i]);
-    if (typeof v1_c !== typeof v2_c) return typeof v1_c === 'number';
-    if (v1_c > v2_c) return true;
-    if (v1_c < v2_c) return false;
+    var c = compareIdentifiers(v1[i], v2[i]);
+    if (c !== 0) return c > 0;
   }
   return true;
 }
 
-function toComparable(n) {
-  if (!isDefined(n)) return 0;
-  if (n.match(/^[0-9]+$/)) {
-    return parseInt(n, 10);
-  }
-  return n;
+function isNumericIdentifier(n) {
+  return /^[0-9]+$/.test(n);
+}
+
+// Precedence follows semver (semver.org §11.4): numeric identifiers compare
+// numerically and rank BELOW alphanumeric ones; a missing identifier equals 0
+// against a numeric counterpart (1.0 == 1.0.0) but outranks any alphanumeric
+// pre-release identifier (1.0.0 > 1.0.0-beta).
+function compareIdentifiers(a, b) {
+  if (!isDefined(a) && !isDefined(b)) return 0;
+  if (!isDefined(a)) return isNumericIdentifier(b) ? -parseInt(b, 10) : 1;
+  if (!isDefined(b)) return isNumericIdentifier(a) ? parseInt(a, 10) : -1;
+  var aNumeric = isNumericIdentifier(a);
+  var bNumeric = isNumericIdentifier(b);
+  if (aNumeric && bNumeric) return parseInt(a, 10) - parseInt(b, 10);
+  if (aNumeric !== bNumeric) return aNumeric ? -1 : 1;
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
 }
 
 //------- External API -------

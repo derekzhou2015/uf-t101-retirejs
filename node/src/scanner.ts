@@ -8,6 +8,7 @@ import { Component } from './types';
 import { checkOSV } from './depsdev';
 import { deepScan } from './deepscan';
 import { evaluateLicense } from './license';
+import { normalizePath } from './utils';
 
 type Ignores = Required<Options>['ignore'];
 
@@ -76,7 +77,7 @@ function filterAndEmitResults(finding: Finding, options: Options, repo: Reposito
 function shouldIgnorePath(fileSpecs: string[], ignores: Ignores): boolean {
   return (
     ignores.paths?.some((i) => {
-      return fileSpecs.some((j) => i.test(j) || i.test(path.resolve(j)));
+      return fileSpecs.some((j) => i.test(normalizePath(j)) || i.test(normalizePath(path.resolve(j))));
     }) ?? false
   );
 }

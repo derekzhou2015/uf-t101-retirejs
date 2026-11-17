@@ -202,10 +202,7 @@ try {
   if (ignorefile) {
     config.ignore.pathsAsString = parseIgnoreFile(ignorefile, config);
   }
-  config.ignore.paths = config.ignore.pathsAsString
-    .map((p) => p.replace(/[.+?^${}()|[\]\\]/g, '\\$&'))
-    .map((p) => p.replace(/[*]{1,2}/g, (a) => (a.length == 2 ? '.*' : '[^/]*')))
-    .map((s) => new RegExp(s));
+  config.ignore.paths = config.ignore.pathsAsString.map((p) => utils.compileIgnorePath(p));
 
   scan();
 } catch (error) {
